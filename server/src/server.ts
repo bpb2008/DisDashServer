@@ -1,42 +1,20 @@
-import express from 'express';
-import { ApolloServer } from "@apollo/server"; 
-import { expressMiddleware } from "@apollo/server/express4";
-import dotenv from 'dotenv';
-import { typeDefs } from './graphql/schema';
-import { resolvers } from "./graphql/resolvers";
-import { db } from './db-connection';
-import cors from 'cors';
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 4000;
+app.use(express.json());
+const port = process.env.PORT;
 
-
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-});
-
-const startServer = async () => {
-  await server.start();
-
-  app.use(cors()); 
-  app.use(express.json()); 
-
-  app.use(
-    "/graphql", 
-    expressMiddleware(server, {
-      context: async ({ req }) => {
-        const authHeader = req.headers.authorization || "";
-        return { db, authHeader };
-    },
+app.use(
+  cors({
+    origin: process.env.URL || "http://localhost:5173",
+    allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept",
   })
-  );
+);
 
-  app.listen(port, () => {
-    console.log(`🚀 Server is running at http://localhost:${port}/graphql`);
-  });
-};
-
-startServer();
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
