@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import router from "./router";
 
 dotenv.config();
 
@@ -14,6 +15,14 @@ app.use(
     allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept",
   })
 );
+
+//API Routes
+
+app.get("/", (req, res) => {
+  res.send("Travel Planner API");
+});
+
+app.use("/api", router);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
